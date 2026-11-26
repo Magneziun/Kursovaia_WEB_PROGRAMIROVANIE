@@ -106,7 +106,7 @@ export default function ChatScreen({ initialSession, onExit }) {
       {/* Анимация всплывающих баллов */}
       {floatingScores.map(f => (
         <div key={f.id} className={`floating-score ${f.val > 0 ? 'pos' : 'neg'}`}>
-          {f.val > 0 ? `+${f.val}` : f.val}
+          {f.val > 0 ? `+${f.val}` : f.val} AURA
         </div>
       ))}
 
@@ -120,7 +120,7 @@ export default function ChatScreen({ initialSession, onExit }) {
 
       <div className="bars glass">
         <div>
-          <div className="muted small">Прогресс: {session.total_score}/{c.date_threshold}</div>
+          <div className="muted small">Прогресс: {session.total_score}/{c.date_threshold} Ауры</div>
           <div className="bar"><div className="fill green" style={{ width: `${progress}%` }} /></div>
         </div>
         <div>
@@ -141,7 +141,7 @@ export default function ChatScreen({ initialSession, onExit }) {
 
       {over ? (
         <div className={`result glass ${session.status === 'won' ? 'win' : 'lose'}`}>
-          {session.status === 'won' ? <h2>🎉 Свидание назначено!</h2> : <h2>💀 Диалог угас</h2>}
+          {session.status === 'won' ? <h2>🎉 хороший улов! </h2> : <h2>💀 Это очень плохо</h2>}
           <button className="btn-primary" onClick={handleExitClick}>В меню</button>
         </div>
       ) : (

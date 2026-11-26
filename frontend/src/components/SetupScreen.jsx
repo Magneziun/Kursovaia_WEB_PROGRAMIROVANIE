@@ -60,14 +60,28 @@ export default function SetupScreen({ onStart }) {
             <option value="hard">Сложная</option>
           </select>
         </div>
-        <div className="row">
-          <label><input type="radio" checked={mode === 'random'} onChange={() => setMode('random')} /> 🎲 Сгенерировать</label>
-          <label><input type="radio" checked={mode === 'manual'} onChange={() => setMode('manual')} /> ✍️ Вручную</label>
-        </div>
+        <div className="toggle-group">
+  <label className="toggle-btn">
+    <input 
+      type="radio" 
+      checked={mode === 'random'} 
+      onChange={() => setMode('random')} 
+    />
+     Сгенерировать
+  </label>
+  <label className="toggle-btn">
+    <input 
+      type="radio" 
+      checked={mode === 'manual'} 
+      onChange={() => setMode('manual')} 
+    />
+     Вручную
+  </label>
+</div>
 
         {mode === 'random' ? (
           <button className="btn-primary" disabled={busy} onClick={() => run(() => api.generateCharacter(difficulty))}>
-            {busy ? 'Генерирую…' : '🎲 Сгенерировать персонажа'}
+            {busy ? 'Генерирую…' : ' Сгенерировать персонажа'}
           </button>
         ) : (
           <div className="grid">
@@ -90,7 +104,7 @@ export default function SetupScreen({ onStart }) {
 
       <section className="card glass">
         <h2>2. Ты</h2>
-        <div className="row"><button className="btn-secondary" onClick={randomize}>🎲 Рандом</button></div>
+        <div className="row"><button className="btn-secondary" onClick={randomize}> Рандом</button></div>
         <div className="grid">
           <label>Имя <input className="glass-input" value={player.name} onChange={(e) => setPlayer({ ...player, name: e.target.value })} /></label>
           <Slider label="Возраст" min={18} max={80} value={player.age} onChange={(v) => setPlayer({ ...player, age: v })} />
