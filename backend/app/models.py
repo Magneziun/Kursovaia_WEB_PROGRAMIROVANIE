@@ -3,6 +3,24 @@ from sqlalchemy import String, Integer, Text, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import Base
 
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    password_hash: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    achievements: Mapped[list["UserAchievement"]] = relationship(back_populates="user")
+    sessions: Mapped[list["Session"]] = relationship(back_populates="user")
+
+class UserAchievement(Base):
+    __tablename__ = "user_achievements"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    code: Mapped[str] = mapped_column(String(50)) # Уникальный код ачивки
+    unlocked_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+    user: Mapped["User"] = relationship(back_populates="achievements")
 
 class Character(Base):
     __tablename__ = "characters"
@@ -21,6 +39,7 @@ class Character(Base):
 class Session(Base):
     __tablename__ = "sessions"
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     character_id: Mapped[int] = mapped_column(ForeignKey("characters.id"))
     player_name: Mapped[str] = mapped_column(String(100))
     player_age: Mapped[int] = mapped_column(Integer)
@@ -34,6 +53,7 @@ class Session(Base):
     status: Mapped[str] = mapped_column(String(20), default="active")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
+    user: Mapped["User"] = relationship(back_populates="sessions")
     character: Mapped["Character"] = relationship(lazy="joined")
     messages: Mapped[list["Message"]] = relationship(back_populates="session")
 

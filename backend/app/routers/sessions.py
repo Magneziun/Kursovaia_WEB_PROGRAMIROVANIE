@@ -8,6 +8,10 @@ from ..models import Character, Session, Message
 from ..schemas import SessionCreateIn, SessionOut, MessageIn, MessageOut, ChatMessageOut
 from ..deepseek import call_deepseek, DeepSeekError
 from ..prompts import chat_system_prompt
+from ..auth import get_current_user
+from ..models import User
+from ..achievements import check_and_award_achievements
+
 
 router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 MAX_ENGAGEMENT = 20
@@ -22,12 +26,13 @@ async def _load_session(db: AsyncSession, session_id: int) -> Session | None:
 
 
 @router.post("", response_model=SessionOut)
-async def create_session(payload: SessionCreateIn, db: AsyncSession = Depends(get_db)):
+async def create_session(payload: SessionCreateIn, current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     char = await db.get(Character, payload.character_id)
     if not char:
         raise HTTPException(404, "Character not found")
 
     session = Session(
+        user_id=current_user.id,
         character_id=char.id,
         player_name=payload.player.name,
         player_age=payload.player.age,
@@ -75,6 +80,7 @@ async def send_message(
     session_id: int, 
     payload: MessageIn, 
     request: Request, 
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     session = await _load_session(db, session_id)
@@ -157,6 +163,8 @@ async def send_message(
     db.add(Message(session_id=session.id, role="assistant", content=reply, score_delta=score))
     await db.commit()
 
+    new_ach = await check_and_award_achievements(db, current_user, session, score, status)
+    
     return MessageOut(
         reply=reply, 
         score=score, 
@@ -166,4 +174,5 @@ async def send_message(
         engagement=session.engagement,
         turn_count=session.turn_count, 
         date_threshold=char.date_threshold,
+        new_achievements=new_ach,
     )

@@ -1,5 +1,6 @@
+from datetime import datetime
 from typing import Optional, List, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 Difficulty = Literal["easy", "medium", "hard"]
 
@@ -34,7 +35,7 @@ class CharacterOut(BaseModel):
     difficulty: str
     date_threshold: int
     initial_patience: int
-    class Config: from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class SessionCreateIn(BaseModel):
     character_id: int
@@ -47,7 +48,7 @@ class SessionOut(BaseModel):
     engagement: int
     turn_count: int
     character: CharacterOut
-    class Config: from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class MessageIn(BaseModel):
     content: str = Field(min_length=1, max_length=2000)
@@ -61,10 +62,27 @@ class MessageOut(BaseModel):
     engagement: int
     turn_count: int
     date_threshold: int
+    new_achievements: List[str] = []
 
 class ChatMessageOut(BaseModel):
     id: int
     role: str
     content: str
     score_delta: int
-    class Config: from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class AchievementOut(BaseModel):
+    code: str
+    unlocked_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+# ПРИНУДИТЕЛЬНАЯ СБОРКА МОДЕЛИ (лечит ошибку "not fully defined")
+AchievementOut.model_rebuild()

@@ -326,3 +326,23 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   color: #fff;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
 }
+
+/* --- ДОСТИЖЕНИЯ В ПРОФИЛЕ --- */
+.achievements-list { display: flex; flex-direction: column; gap: 12px; }
+.achievement-item { display: flex; align-items: center; gap: 16px; padding: 16px; transition: all 0.3s ease; }
+.ach-img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: rgba(0,0,0,0.2); }
+.ach-info h3 { margin: 0 0 4px 0; font-size: 16px; }
+.ach-info p { margin: 0; font-size: 14px; color: var(--text-muted); }
+
+/* Заблокированная ачивка */
+.achievement-item.locked { opacity: 0.4; filter: grayscale(1); }
+.achievement-item.locked .ach-info h3 { color: var(--text-muted); }
+
+/* Специальный тост для ачивки */
+.toast-ach {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.9), rgba(202, 138, 4, 0.9));
+  border-left: 4px solid #fde047;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 4px 20px rgba(234, 179, 8, 0.5);
+}

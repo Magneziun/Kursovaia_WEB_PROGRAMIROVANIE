@@ -54,7 +54,17 @@ export default function ChatScreen({ initialSession, onExit }) {
         engagement: res.engagement, 
         turn_count: res.turn_count 
       });
-      
+            // Проверяем новые ачивки
+      if (res.new_achievements && res.new_achievements.length > 0) {
+        res.new_achievements.forEach(code => {
+          playSound('achievement');
+          // Специальный тост для ачивки
+          const achToast = { id: Date.now() + code, text: `🏆 Разблокировано достижение!`, isAchievement: true };
+          setToasts(prev => [...prev, achToast]);
+          setTimeout(() => setToasts(prev => prev.filter(t => t.id !== achToast.id)), 5000);
+        });
+      }
+
       // 1. Показываем уведомление с комментарием ИИ
       if (res.reason) {
         addToast(`ИИ: ${res.reason} (Оценка: ${res.score > 0 ? '+' : ''}${res.score})`);
@@ -99,7 +109,9 @@ export default function ChatScreen({ initialSession, onExit }) {
       {/* Контейнер для всплывающих уведомлений */}
       <div className="toast-container">
         {toasts.map(t => (
-          <div key={t.id} className="toast glass slide-in-right">{t.text}</div>
+          <div key={t.id} className={`toast glass slide-in-right ${t.isAchievement ? 'toast-ach' : ''}`}>
+            {t.text}
+          </div>
         ))}
       </div>
 

@@ -17,6 +17,7 @@ const variants = {
   'game-exit': ['game-exit.mp3'],
   'game-win': ['game-win.mp3'],
   'game-lose': ['game-lose.mp3'],
+  'achievement': ['achievement.mp3'],
 };
 
 export const playSound = (type) => {
